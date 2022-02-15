@@ -6,6 +6,10 @@ export type Subscription<T> = (value: T) => void;
  */
 export type Manager<T> = (s: Shared<T>) => void;
 
+/**
+ * Shared lets us share data between multiple contexts.
+ * They can all subscribe to changes in it.
+ */
 export class Shared<T> {
   /** Current value of this object. */
   private value: T;
@@ -41,8 +45,7 @@ export class Shared<T> {
     this.notify();
   }
 
-  /** Get current value of this shared object.
-   */
+  /** Get current value of this shared object. */
   get(): T {
     return this.value;
   }
