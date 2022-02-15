@@ -6,7 +6,7 @@ type Subscription<T> = (value: T) => void;
  */
 type Manager<T> = (s: Shared<T>) => void;
 
-class Shared<T> {
+export class Shared<T> {
   /** Current value of this object. */
   private value: T;
 
@@ -51,8 +51,9 @@ class Shared<T> {
   /**
    * Update value of this shared object.
    * */
-  async update(updator: (value: T) => Promise<T>) {
+  async update(updator: (value: T) => T | Promise<T>) {
     const newVal = await updator(this.value);
+    console.log(newVal);
     this.set(newVal);
   }
 
