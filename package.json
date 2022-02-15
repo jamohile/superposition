@@ -1,0 +1,17 @@
+{
+  "name": "superposition",
+  "version": "0.1.0",
+  "description": "A state manager you'll like.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jet"
+  },
+  "author": "Jay Mohile",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^27.4.0",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.3",
+    "typescript": "^4.5.5"
+  }
+}
