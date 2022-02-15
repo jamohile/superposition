@@ -1,6 +1,6 @@
 import { Manager, Shared } from "../shared/shared";
 
-class SharedMap<T> extends Shared<Map<string, Shared<T>>> {
+export class SharedMap<T> extends Shared<Map<string, Shared<T>>> {
   private elementManager?: Manager<T>;
 
   constructor(
@@ -12,12 +12,17 @@ class SharedMap<T> extends Shared<Map<string, Shared<T>>> {
     this.elementManager = elementManager;
   }
 
-  at(key: string, initial?: T) {
+  at(key: string, initial?: T): Shared<T> {
     const map = this.get();
 
     if (!map.has(key)) {
-      map.set(key, new Shared(initial as unknown as T, this.elementManager));
+      const newElement = new Shared(
+        initial as unknown as T,
+        this.elementManager
+      );
+      newElement.subscribe(() => this.notify());
+      map.set(key, newElement);
     }
-    return map.get(key);
+    return map.get(key) as Shared<T>;
   }
 }

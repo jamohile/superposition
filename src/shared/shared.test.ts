@@ -68,3 +68,14 @@ it("notifies on update.", async () => {
   expect(sub).toHaveBeenCalledTimes(1);
   expect(sub).toHaveBeenCalledWith("foo123");
 });
+
+it("runs manager precisely once.", () => {
+  const manager = jest.fn();
+  const s = new Shared(0, manager);
+
+  s.set(1);
+  s.set(2);
+  s.set(3);
+
+  expect(manager).toHaveBeenCalledTimes(1);
+});

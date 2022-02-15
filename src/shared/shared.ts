@@ -52,12 +52,11 @@ export class Shared<T> {
    * */
   async update(updator: (value: T) => T | Promise<T>) {
     const newVal = await updator(this.value);
-    console.log(newVal);
     this.set(newVal);
   }
 
   /** Notify all subcriptions of a change. */
-  private notify() {
+  protected notify() {
     this.subcriptions.forEach((subscription) => subscription(this.value));
   }
 }
