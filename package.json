@@ -4,7 +4,7 @@
   "description": "A state manager you'll like.",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jet"
+    "test": "jest"
   },
   "author": "Jay Mohile",
   "license": "MIT",
