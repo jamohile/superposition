@@ -1,10 +1,10 @@
 /** A subscription listens for changes to a shared object. */
-type Subscription<T> = (value: T) => void;
+export type Subscription<T> = (value: T) => void;
 
 /** A manager is invoked by a shared object on creation,
  *  and is used to manage any necessary background work in a singleton way.
  */
-type Manager<T> = (s: Shared<T>) => void;
+export type Manager<T> = (s: Shared<T>) => void;
 
 export class Shared<T> {
   /** Current value of this object. */
@@ -16,12 +16,11 @@ export class Shared<T> {
   /** Subscriptions to this object. */
   private subcriptions = new Map<number, Subscription<T>>();
 
-  constructor(initial: T, manager: Manager<T> = () => {}) {
+  constructor(initial: T, manager?: Manager<T>) {
     this.value = initial;
 
     // Start the manager. It will run for whole lifetime of obj.
-    // TODO: destructor?
-    manager(this);
+    if (manager) manager(this);
   }
 
   /** Listen for changes to this shared object.
