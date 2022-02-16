@@ -21,7 +21,11 @@ export class SharedMap<T> {
     /** Manages this SharedMap object. */
     manager?: Manager<Map<string, Shared<T>>>
   ) {
+    // Create a map of the initial objects,
+    // and subscribe to all of them.
     const map = new Map(Object.entries(initialElements));
+    map.forEach((e) => e.subscribe(() => this.elements.notify()));
+
     this.elements = new Shared(map, manager);
     this.elementManager = elementManager;
   }
