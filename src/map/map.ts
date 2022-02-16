@@ -14,12 +14,15 @@ export class SharedMap<T> {
   private elementManager?: (key: string) => Manager<T>;
 
   constructor(
+    /** Initialize the map based on an object. */
+    initialElements: Record<string, Shared<T>> = {},
     /** Returns a manager for each element based on the key. */
     elementManager?: (key: string) => Manager<T>,
     /** Manages this SharedMap object. */
     manager?: Manager<Map<string, Shared<T>>>
   ) {
-    this.elements = new Shared(new Map(), manager);
+    const map = new Map(Object.entries(initialElements));
+    this.elements = new Shared(map, manager);
     this.elementManager = elementManager;
   }
 

@@ -28,7 +28,7 @@ it("creates managers for elements it creates.", () => {
     if (key === "1") return manager2;
   });
 
-  const sm = new SharedMap(elementManager, mapManager);
+  const sm = new SharedMap({}, elementManager, mapManager);
 
   // Create shared objects for two separate elements.
   const s1 = sm.at("0");
