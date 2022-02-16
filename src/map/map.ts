@@ -1,4 +1,5 @@
-import { Manager, Shared, Subscription } from "../shared/shared";
+import { DEFAULT_MANAGER, Manager, Shared } from "../shared/shared";
+import { Subscribable, Subscription } from "../subscribable/subscribable";
 
 /**
  * SharedMap is a higher-order version of shared.
@@ -8,49 +9,44 @@ import { Manager, Shared, Subscription } from "../shared/shared";
  * For example, we may want to keep a SharedMap of ID-able objects.
  * Each of those can be individually set, listened, etc, so they are also versions of Shared.
  */
-type SharedMapElements<T> = Map<string, Shared<T>>;
-export class SharedMap<T> {
-  private elements: Shared<SharedMapElements<T>>;
-  private elementManager?: (key: string) => Manager<T>;
+
+export const DEFAULT_ELEMENT_MANAGER = (key: string) => DEFAULT_MANAGER;
+export class SharedMap<T> extends Shared<Record<string, Shared<T>>> {
+  private elementManager: (key: string) => Manager<T>;
 
   constructor(
     /** Initialize the map based on an object. */
     initialElements: Record<string, Shared<T>> = {},
     /** Returns a manager for each element based on the key. */
-    elementManager?: (key: string) => Manager<T>,
+    elementManager: (key: string) => Manager<T> = DEFAULT_ELEMENT_MANAGER,
     /** Manages this SharedMap object. */
-    manager?: Manager<Map<string, Shared<T>>>
+    manager: Manager<Record<string, Shared<T>>> = DEFAULT_MANAGER
   ) {
-    // Create a map of the initial objects,
-    // and subscribe to all of them.
-    const map = new Map(Object.entries(initialElements));
-    map.forEach((e) => e.subscribe(() => this.elements.notify()));
+    super(initialElements, manager);
+    Object.values(initialElements).forEach((e) => this.subscribeToElement(e));
 
-    this.elements = new Shared(map, manager);
     this.elementManager = elementManager;
   }
 
   /** Access the child Shared object at given key.
    *  If it doesn't exist yet, it will be created (with initial) and managed.
-   *
    */
-  at(key: string, initial?: T): Shared<T> {
-    const map = this.elements.get();
+  at(key: string, initial: T): Shared<T> {
+    const elements = this.get();
 
     // Create the element if it doesn't exist.
-    if (!map.has(key)) {
+    if (!(key in elements)) {
       const newElement = new Shared(
-        initial as unknown as T,
+        initial,
         this.elementManager && this.elementManager(key)
       );
-      // We'd like to be able to respond to events from this child.
-      newElement.subscribe(() => this.elements.notify());
-      map.set(key, newElement);
+      this.subscribeToElement(newElement);
+      elements[key] = newElement;
     }
-    return map.get(key) as Shared<T>;
+    return elements[key];
   }
 
-  subscribe(subscription: Subscription<SharedMapElements<T>>) {
-    return this.elements.subscribe(subscription);
+  private subscribeToElement(element: Shared<T>) {
+    return element.subscribe(() => this.notify());
   }
 }

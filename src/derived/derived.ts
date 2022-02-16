@@ -1,5 +1,6 @@
 import { SharedMap } from "../map/map";
-import { Shared, Subscription } from "../shared/shared";
+import { Shared } from "../shared/shared";
+import { Subscription } from "../subscribable/subscribable";
 
 /** Derived maintains a list of dependencies on other Shared objects,
  *  while computing its own shared values.

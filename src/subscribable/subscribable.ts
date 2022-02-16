@@ -5,7 +5,7 @@ export type Subscription<T> = (value: T) => void;
 export type Unsubscriber = () => void;
 
 /** Manages a pool of subscriptions, and allows them to be notified.  */
-export class SubscriptionManager<T> {
+export class Subscribable<T> {
   private subscriptions = new Map<number, Subscription<T>>();
 
   /** Next ID to use for subscriptions. */
@@ -13,7 +13,7 @@ export class SubscriptionManager<T> {
 
   /** Listen for changes to this shared object.
    */
-  subscribe(subscription: Subscription<T>): Unsubscriber {
+  public subscribe(subscription: Subscription<T>): Unsubscriber {
     const id = this.NEXT_ID;
     this.NEXT_ID += 1;
 
@@ -22,7 +22,7 @@ export class SubscriptionManager<T> {
   }
 
   /** Broadcasts a value to all subscribers. */
-  notify(value: T) {
+  protected notify(value: T) {
     this.subscriptions.forEach((subscription) => subscription(value));
   }
 }

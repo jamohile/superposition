@@ -1,4 +1,4 @@
-import { SubscriptionManager } from "../subscription-manager/subscription-manager";
+import { Subscription, Subscribable } from "../subscribable/subscribable";
 
 /** A manager is invoked by a shared object on creation,
  *  and is used to manage any necessary background work in a singleton way.
@@ -9,24 +9,18 @@ export type Manager<T> = (s: Shared<T>) => void;
  * Shared lets us share data between multiple contexts.
  * They can all subscribe to changes in it.
  */
-export class Shared<T> {
-  private subscriptionManager = new SubscriptionManager<T>();
 
+export const DEFAULT_MANAGER = () => {};
+export class Shared<T> extends Subscribable<T> {
   /** Current value of this object. */
   private value: T;
 
-  constructor(initial: T, manager?: Manager<T>) {
-    this.value = initial;
+  constructor(initial: T, manager: Manager<T> = DEFAULT_MANAGER) {
+    super();
 
+    this.value = initial;
     // Start the manager. It will run for whole lifetime of obj.
     if (manager) manager(this);
-  }
-
-  /** Listen for changes to this shared object.
-   * @return - A callback to delete the subscription.
-   */
-  subscribe(subscription: Subscription<T>): () => void {
-    return this.subscriptionManager.subscribe(subscription);
   }
 
   /** Set value of this shared object.
@@ -49,8 +43,7 @@ export class Shared<T> {
     this.set(newVal);
   }
 
-  /** Notify all subcriptions of a change. */
-  private notify() {
-    this.subscriptionManager.notify(this.value);
+  protected notify() {
+    super.notify(this.value);
   }
 }

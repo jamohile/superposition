@@ -5,8 +5,8 @@ it("lets us access arbitrary elements.", () => {
   const sm = new SharedMap();
 
   // Get shared objects for two separate elements.
-  const s1 = sm.at("0");
-  const s2 = sm.at("1");
+  const s1 = sm.at("0", undefined);
+  const s2 = sm.at("1", undefined);
 
   // Make sure they are shared objects,
   // and not the same one.
@@ -21,7 +21,7 @@ it("creates managers for elements it creates.", () => {
   const manager2 = jest.fn();
 
   // In addition to its own manager, maps use a higher order one.
-  // The first is a normal manager, the second generates a manager per element. 
+  // The first is a normal manager, the second generates a manager per element.
   const mapManager = jest.fn();
   const elementManager = jest.fn().mockImplementation((key) => {
     if (key === "0") return manager1;
@@ -31,8 +31,8 @@ it("creates managers for elements it creates.", () => {
   const sm = new SharedMap({}, elementManager, mapManager);
 
   // Create shared objects for two separate elements.
-  const s1 = sm.at("0");
-  const s2 = sm.at("1");
+  const s1 = sm.at("0", undefined);
+  const s2 = sm.at("1", undefined);
 
   // The map's own manager should be called once.
   expect(mapManager).toHaveBeenCalledTimes(1);
@@ -51,9 +51,9 @@ it("returns the same element after multiple accesses.", () => {
   const sm = new SharedMap();
 
   // Get shared objects multiple times.
-  const s1 = sm.at("0");
-  const s2 = sm.at("0");
-  const s3 = sm.at("0");
+  const s1 = sm.at("0", undefined);
+  const s2 = sm.at("0", undefined);
+  const s3 = sm.at("0", undefined);
 
   // Should all be equal.
   expect(s2).toBe(s1);
@@ -66,8 +66,8 @@ it("notifies subscribers when children change.", () => {
   const map_subscription = jest.fn();
   sm.subscribe(map_subscription);
 
-  const s1 = sm.at("0");
-  const s2 = sm.at("1");
+  const s1 = sm.at("0", 0);
+  const s2 = sm.at("1", 0);
 
   // Fire updates against children.
   s1.set(0);
