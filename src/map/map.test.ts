@@ -1,4 +1,4 @@
-import { Shared } from "../shared/shared";
+import { SharedObject } from "../object/object";
 import { SharedMap } from "./map";
 
 it("lets us access arbitrary elements.", () => {
@@ -10,8 +10,8 @@ it("lets us access arbitrary elements.", () => {
 
   // Make sure they are shared objects,
   // and not the same one.
-  expect(s1).toBeInstanceOf(Shared);
-  expect(s2).toBeInstanceOf(Shared);
+  expect(s1).toBeInstanceOf(SharedObject);
+  expect(s2).toBeInstanceOf(SharedObject);
 
   expect(s1).not.toBe(s2);
 });

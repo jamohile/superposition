@@ -1,11 +1,11 @@
 import { SharedMap } from "../map/map";
-import { Shared } from "../shared/shared";
+import { SharedObject } from "../object/object";
 import {
   Subscribable,
   SubscribableCollection,
 } from "../subscribable/subscribable";
 
-/** Derived maintains a list of dependencies on other Shared objects,
+/** Derived maintains a list of dependencies on other SharedObject objects,
  *  while computing its own shared values.
  *
  * There is a bit of redundancy in these typings, since we maintain separate generics for
@@ -24,7 +24,7 @@ export class Derived<
   constructor(
     /* Return derived value based on dependencies.*/
     handler: (values: V) => T | Promise<T>,
-    /** Shared objects that this object will pull data from. */
+    /** SharedObject objects that this object will pull data from. */
     dependencies: D,
     /** Initial value for the value. */
     initial: T

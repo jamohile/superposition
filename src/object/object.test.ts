@@ -1,18 +1,18 @@
-import { Shared } from "./shared";
+import { SharedObject } from "./object";
 
 it("can return initial value.", () => {
-  const s = new Shared("foo");
+  const s = new SharedObject("foo");
   expect(s.get()).toEqual("foo");
 });
 
 it("can set value.", () => {
-  const s = new Shared("foo");
+  const s = new SharedObject("foo");
   s.set("bar");
   expect(s.get()).toEqual("bar");
 });
 
 it("notifies subscribers on change.", () => {
-  const s = new Shared("foo");
+  const s = new SharedObject("foo");
 
   // Set up subscriptions.
   const sub1 = jest.fn();
@@ -29,7 +29,7 @@ it("notifies subscribers on change.", () => {
 });
 
 it("notifies subscribers multiple times.", () => {
-  const s = new Shared("foo");
+  const s = new SharedObject("foo");
 
   // Set up subscription.
   const sub1 = jest.fn();
@@ -49,7 +49,7 @@ it("notifies subscribers multiple times.", () => {
 });
 
 it("can update value.", async () => {
-  const s = new Shared("foo");
+  const s = new SharedObject("foo");
   s.set("bar");
 
   // Perform an update rather than set.
@@ -58,7 +58,7 @@ it("can update value.", async () => {
 });
 
 it("notifies on update.", async () => {
-  const s = new Shared("foo");
+  const s = new SharedObject("foo");
   const sub = jest.fn();
 
   s.subscribe(sub);
@@ -71,7 +71,7 @@ it("notifies on update.", async () => {
 
 it("runs manager precisely once.", () => {
   const manager = jest.fn();
-  const s = new Shared(0, manager);
+  const s = new SharedObject(0, manager);
 
   s.set(1);
   s.set(2);

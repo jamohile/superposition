@@ -1,9 +1,9 @@
-import { Shared } from "../shared/shared";
+import { SharedObject } from "../object/object";
 import { Derived } from "./derived";
 
 it("updates based on dependencies.", (done) => {
-  const dep1 = new Shared(0);
-  const dep2 = new Shared(0);
+  const dep1 = new SharedObject(0);
+  const dep2 = new SharedObject(0);
 
   const d = new Derived(
     (deps) => {
