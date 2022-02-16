@@ -1,5 +1,4 @@
-/** A subscription listens for changes to a shared object. */
-export type Subscription<T> = (value: T) => void;
+import { SubscriptionManager } from "../subscription-manager/subscription-manager";
 
 /** A manager is invoked by a shared object on creation,
  *  and is used to manage any necessary background work in a singleton way.
@@ -11,14 +10,10 @@ export type Manager<T> = (s: Shared<T>) => void;
  * They can all subscribe to changes in it.
  */
 export class Shared<T> {
+  private subscriptionManager = new SubscriptionManager<T>();
+
   /** Current value of this object. */
   private value: T;
-
-  /** Next ID to use for subscriptions. */
-  private NEXT_ID = 0;
-
-  /** Subscriptions to this object. */
-  private subcriptions = new Map<number, Subscription<T>>();
 
   constructor(initial: T, manager?: Manager<T>) {
     this.value = initial;
@@ -31,11 +26,7 @@ export class Shared<T> {
    * @return - A callback to delete the subscription.
    */
   subscribe(subscription: Subscription<T>): () => void {
-    const id = this.NEXT_ID;
-    this.NEXT_ID += 1;
-
-    this.subcriptions.set(id, subscription);
-    return () => this.subcriptions.delete(id);
+    return this.subscriptionManager.subscribe(subscription);
   }
 
   /** Set value of this shared object.
@@ -59,7 +50,7 @@ export class Shared<T> {
   }
 
   /** Notify all subcriptions of a change. */
-  notify() {
-    this.subcriptions.forEach((subscription) => subscription(this.value));
+  private notify() {
+    this.subscriptionManager.notify(this.value);
   }
 }
