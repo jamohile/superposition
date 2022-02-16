@@ -59,7 +59,7 @@ export class Shared<T> {
   }
 
   /** Notify all subcriptions of a change. */
-  protected notify() {
+  notify() {
     this.subcriptions.forEach((subscription) => subscription(this.value));
   }
 }

@@ -1,4 +1,4 @@
-import { Manager, Shared } from "../shared/shared";
+import { Manager, Shared, Subscription } from "../shared/shared";
 
 /**
  * SharedMap is a higher-order version of shared.
@@ -8,7 +8,9 @@ import { Manager, Shared } from "../shared/shared";
  * For example, we may want to keep a SharedMap of ID-able objects.
  * Each of those can be individually set, listened, etc, so they are also versions of Shared.
  */
-export class SharedMap<T> extends Shared<Map<string, Shared<T>>> {
+type SharedMapElements<T> = Map<string, Shared<T>>;
+export class SharedMap<T> {
+  private elements: Shared<SharedMapElements<T>>;
   private elementManager?: (key: string) => Manager<T>;
 
   constructor(
@@ -17,7 +19,7 @@ export class SharedMap<T> extends Shared<Map<string, Shared<T>>> {
     /** Manages this SharedMap object. */
     manager?: Manager<Map<string, Shared<T>>>
   ) {
-    super(new Map(), manager);
+    this.elements = new Shared(new Map(), manager);
     this.elementManager = elementManager;
   }
 
@@ -26,7 +28,7 @@ export class SharedMap<T> extends Shared<Map<string, Shared<T>>> {
    *
    */
   at(key: string, initial?: T): Shared<T> {
-    const map = this.get();
+    const map = this.elements.get();
 
     // Create the element if it doesn't exist.
     if (!map.has(key)) {
@@ -35,9 +37,13 @@ export class SharedMap<T> extends Shared<Map<string, Shared<T>>> {
         this.elementManager && this.elementManager(key)
       );
       // We'd like to be able to respond to events from this child.
-      newElement.subscribe(() => this.notify());
+      newElement.subscribe(() => this.elements.notify());
       map.set(key, newElement);
     }
     return map.get(key) as Shared<T>;
+  }
+
+  subscribe(subscription: Subscription<SharedMapElements<T>>) {
+    return this.elements.subscribe(subscription);
   }
 }
