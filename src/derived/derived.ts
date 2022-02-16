@@ -1,38 +1,42 @@
 import { SharedMap } from "../map/map";
 import { Shared } from "../shared/shared";
-import { Subscription } from "../subscribable/subscribable";
+import {
+  collate,
+  Subscribable,
+  Subscription,
+} from "../subscribable/subscribable";
 
 /** Derived maintains a list of dependencies on other Shared objects,
  *  while computing its own shared values.
+ *
+ * There is a bit of redundancy in these typings, since we maintain separate generics for
+ * dependencies' shared and their values. Really, the values are a function of the shared.
+ * But I don't believe typescript has a good way to encode that.
  */
-export class Derived<T> {
-  private dependencies: SharedMap<any>;
-  private value: Shared<T>;
+export class Derived<
+  T,
+  /** Dependencies, as shared objects.*/
+  D extends Record<string, Subscribable<any>>,
+  /** Dependencies' values. TODO: encode this in D */
+  V extends Record<string, any>
+> extends Subscribable<T> {
+  private dependencies: D;
 
   constructor(
     /* Compute updated value based on dependencies.
-     * It is the caller's repsonsibility to get data from those objects.
-     * TODO: handle race conditions...typescript makes this hard to type.
      */
-    handler: () => T | Promise<T>,
+    handler: (values: V) => T | Promise<T>,
     /** Shared objects that this object will pull data from. */
-    dependencies: Record<string, Shared<any>>,
+    dependencies: D,
     /** Initial value for the value. */
     initial: T
   ) {
-    this.dependencies = new SharedMap(dependencies);
-    this.value = new Shared(initial);
+    super(initial);
+    this.dependencies = dependencies;
 
-    this.dependencies.subscribe(async () => {
-      this.value.set(await handler());
+    collate(this.dependencies, async (dependencyValues) => {
+      const derivedValue = await handler(dependencyValues as V);
+      this.notify(derivedValue);
     });
-  }
-
-  subscribe(subscription: Subscription<T>) {
-    return this.value.subscribe(subscription);
-  }
-
-  get() {
-    return this.value.get();
   }
 }

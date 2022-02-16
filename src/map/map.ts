@@ -1,5 +1,5 @@
 import { DEFAULT_MANAGER, Manager, Shared } from "../shared/shared";
-import { Subscribable, Subscription } from "../subscribable/subscribable";
+import { collate, Subscribable, Subscription } from "../subscribable/subscribable";
 
 /**
  * SharedMap is a higher-order version of shared.
@@ -47,6 +47,6 @@ export class SharedMap<T> extends Shared<Record<string, Shared<T>>> {
   }
 
   private subscribeToElement(element: Shared<T>) {
-    return element.subscribe(() => this.notify());
+    return element.subscribe(() => this.notify(this.get()));
   }
 }

@@ -12,13 +12,9 @@ export type Manager<T> = (s: Shared<T>) => void;
 
 export const DEFAULT_MANAGER = () => {};
 export class Shared<T> extends Subscribable<T> {
-  /** Current value of this object. */
-  private value: T;
-
   constructor(initial: T, manager: Manager<T> = DEFAULT_MANAGER) {
-    super();
+    super(initial);
 
-    this.value = initial;
     // Start the manager. It will run for whole lifetime of obj.
     if (manager) manager(this);
   }
@@ -26,24 +22,14 @@ export class Shared<T> extends Subscribable<T> {
   /** Set value of this shared object.
    */
   set(value: T) {
-    this.value = value;
-    this.notify();
-  }
-
-  /** Get current value of this shared object. */
-  get(): T {
-    return this.value;
+    this.notify(value);
   }
 
   /**
    * Update value of this shared object.
    * */
   async update(updator: (value: T) => T | Promise<T>) {
-    const newVal = await updator(this.value);
+    const newVal = await updator(this.get());
     this.set(newVal);
-  }
-
-  protected notify() {
-    super.notify(this.value);
   }
 }
