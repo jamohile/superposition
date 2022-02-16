@@ -1,5 +1,5 @@
 import { SharedMap } from "../map/map";
-import { Shared } from "../shared/shared";
+import { Shared, Subscription } from "../shared/shared";
 
 /** Derived maintains a list of dependencies on other Shared objects,
  *  while computing its own shared values.
@@ -25,5 +25,13 @@ export class Derived<T> {
     this.dependencies.subscribe(async () => {
       this.value.set(await handler());
     });
+  }
+
+  subscribe(subscription: Subscription<T>) {
+    return this.value.subscribe(subscription);
+  }
+
+  get() {
+    return this.value.get();
   }
 }
