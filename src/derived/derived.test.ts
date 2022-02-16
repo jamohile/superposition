@@ -6,8 +6,8 @@ it("updates based on dependencies.", (done) => {
   const dep2 = new Shared(0);
 
   const d = new Derived(
-    () => {
-      return dep1.get() * dep2.get() ** 2;
+    (deps) => {
+      return deps.x * deps.y ** 2;
     },
     { x: dep1, y: dep2 },
     0

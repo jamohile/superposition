@@ -34,6 +34,8 @@ export class Derived<
     super(initial);
     this.dependencies = dependencies;
 
+    // Combine dependency subscriptions into a single one.
+    // Whenever that fires, update our derived value.
     collate(this.dependencies, async (dependencyValues) => {
       const derivedValue = await handler(dependencyValues as V);
       this.notify(derivedValue);
