@@ -1,9 +1,8 @@
 import { SharedMap } from "../map/map";
 import { Shared } from "../shared/shared";
 import {
-  collate,
   Subscribable,
-  Subscription,
+  SubscribableCollection,
 } from "../subscribable/subscribable";
 
 /** Derived maintains a list of dependencies on other Shared objects,
@@ -20,11 +19,10 @@ export class Derived<
   /** Dependencies' values. TODO: encode this in D */
   V extends Record<string, any>
 > extends Subscribable<T> {
-  private dependencies: D;
+  private dependencies: SubscribableCollection<D, V>;
 
   constructor(
-    /* Compute updated value based on dependencies.
-     */
+    /* Return derived value based on dependencies.*/
     handler: (values: V) => T | Promise<T>,
     /** Shared objects that this object will pull data from. */
     dependencies: D,
@@ -32,11 +30,11 @@ export class Derived<
     initial: T
   ) {
     super(initial);
-    this.dependencies = dependencies;
 
     // Combine dependency subscriptions into a single one.
     // Whenever that fires, update our derived value.
-    collate(this.dependencies, async (dependencyValues) => {
+    this.dependencies = new SubscribableCollection(dependencies);
+    this.dependencies.subscribe(async (dependencyValues) => {
       const derivedValue = await handler(dependencyValues as V);
       this.notify(derivedValue);
     });

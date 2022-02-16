@@ -39,32 +39,41 @@ export class Subscribable<T> {
   }
 }
 
-/** Takes a record of subscribables and combines them into a single subscription.
- *  handler will be called with all values when any one changes.
- */
-export function collate<
-  S extends Record<string, Subscribable<any>>,
+/** Wraps a number of subscribables so we can operate on their values together. */
+export class SubscribableCollection<
+  /** Subscribables, as shared objects.*/
+  D extends Record<string, Subscribable<any>>,
+  /** Subscribables' values. TODO: encode this in D */
   V extends Record<string, any>
->(sources: S, handler: (values: V) => void) {
-  // Set up a subscription for each source.
-  for (const source of Object.values(sources)) {
-    source.subscribe(() => {
-      const values = getAll(sources) as V;
-      handler(values);
-    });
-  }
-}
+> extends Subscribable<V> {
+  private subscribables: D;
 
-/** Combine values from all sources by key. */
-export function getAll<
-  S extends Record<string, Subscribable<any>>,
-  V extends Record<string, any>
->(sources: S): V {
-  const values: V = {} as V;
+  constructor(subscribables: D) {
+    super(SubscribableCollection.getAll(subscribables));
+    this.subscribables = subscribables;
 
-  for (const [k, s] of Object.entries(sources)) {
-    // @ts-ignore
-    (values as V)[k] = s.get();
+    // Combine all subscribables into a single subscription.
+    // Set up a subscription for each source.
+    for (const source of Object.values(subscribables)) {
+      source.subscribe(() => {
+        const values = SubscribableCollection.getAll(this.subscribables) as V;
+        this.notify(values);
+      });
+    }
   }
-  return values;
+
+  /** Get combined values of all subscribables. */
+  static getAll<
+    /** Subscribables, as shared objects.*/
+    D extends Record<string, Subscribable<any>>,
+    /** Subscribables' values. TODO: encode this in D */
+    V extends Record<string, any>
+  >(subscribables: D): V {
+    const values = {} as V;
+    for (const [k, s] of Object.entries(subscribables)) {
+      // @ts-ignore
+      values[k] = s.get();
+    }
+    return values;
+  }
 }

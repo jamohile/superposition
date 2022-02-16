@@ -1,5 +1,5 @@
 import { DEFAULT_MANAGER, Manager, Shared } from "../shared/shared";
-import { collate, Subscribable, Subscription } from "../subscribable/subscribable";
+import { Subscribable, Subscription } from "../subscribable/subscribable";
 
 /**
  * SharedMap is a higher-order version of shared.
