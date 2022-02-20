@@ -31,6 +31,7 @@ s.subscribe((value) => {
 This is a bit cooler! We can now react to changes across our application. However, the real power of superposition is realized when we consider how to use its other classes.
 
 ## DerivedObject
+
 Often times, we'd like to compute some data based on one or more other pieces of data.
 
 To use a contrived example, imagine we have a set of numbers X. We'd like to compute its average A.
@@ -40,9 +41,12 @@ Now, A must be recomputed whenever X is changed (reloaded, updated, etc). Howeve
 ```ts
 const x = new SharedObject([0, 1, 2, 3]);
 
-const avg = new DerivedObject((vals) => {
-  return sum(vals) / x.length;
-}, {x});
+const avg = new DerivedObject(
+  (deps) => {
+    return sum(deps.x) / x.length;
+  },
+  { x }
+);
 ```
 
 There! Now we can subscribe to `avg` just like we would for `x`. Whenever `x` is changed, `avg` will be too - and its subscribers will be notified.
