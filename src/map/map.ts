@@ -1,5 +1,6 @@
 import { DEFAULT_MANAGER, Manager, SharedObject } from "../object/object";
 import { Subscribable, Subscription } from "../subscribable/subscribable";
+import { SubscribableMap } from "../subscribable/subscribable-map";
 
 /**
  * SharedMap is a higher-order version of shared.
@@ -11,8 +12,9 @@ import { Subscribable, Subscription } from "../subscribable/subscribable";
  */
 
 export const DEFAULT_ELEMENT_MANAGER = (key: string) => DEFAULT_MANAGER;
-export class SharedMap<T> extends SharedObject<Record<string, SharedObject<T>>> {
+export class SharedMap<T> extends SubscribableMap<T, SharedObject<T>> {
   private elementManager: (key: string) => Manager<T>;
+  private initialElementValue: T;
 
   constructor(
     /** Initialize the map based on an object. */
@@ -20,33 +22,21 @@ export class SharedMap<T> extends SharedObject<Record<string, SharedObject<T>>> 
     /** Returns a manager for each element based on the key. */
     elementManager: (key: string) => Manager<T> = DEFAULT_ELEMENT_MANAGER,
     /** Manages this SharedMap object. */
-    manager: Manager<Record<string, SharedObject<T>>> = DEFAULT_MANAGER
+    manager: Manager<Record<string, SharedObject<T>>> = DEFAULT_MANAGER,
+    initialElementValue: T = undefined as unknown as T
   ) {
-    super(initialElements, manager);
-    Object.values(initialElements).forEach((e) => this.subscribeToElement(e));
+    super(initialElements);
 
     this.elementManager = elementManager;
+    this.initialElementValue = initialElementValue;
+
+    if (manager) manager(this);
   }
 
-  /** Access the child SharedObject object at given key.
-   *  If it doesn't exist yet, it will be created (with initial) and managed.
-   */
-  at(key: string, initial: T): SharedObject<T> {
-    const elements = this.get();
-
-    // Create the element if it doesn't exist.
-    if (!(key in elements)) {
-      const newElement = new SharedObject(
-        initial,
-        this.elementManager && this.elementManager(key)
-      );
-      this.subscribeToElement(newElement);
-      elements[key] = newElement;
-    }
-    return elements[key];
-  }
-
-  private subscribeToElement(element: SharedObject<T>) {
-    return element.subscribe(() => this.notify(this.get()));
+  makeElement(key: string): SharedObject<T> {
+    return new SharedObject(
+      this.initialElementValue,
+      this.elementManager && this.elementManager(key)
+    );
   }
 }

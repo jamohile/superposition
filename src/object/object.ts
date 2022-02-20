@@ -3,7 +3,7 @@ import { Subscription, Subscribable } from "../subscribable/subscribable";
 /** A manager is invoked by a shared object on creation,
  *  and is used to manage any necessary background work in a singleton way.
  */
-export type Manager<T> = (s: SharedObject<T>) => void;
+export type Manager<T> = (s: Subscribable<T>) => void;
 
 /**
  * SharedObject lets us share data between multiple contexts.
