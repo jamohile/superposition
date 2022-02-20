@@ -1,4 +1,4 @@
-import { Subscription, Subscribable } from "../../subscribable/subscribable";
+import { Subscribable } from "../../subscribable/subscribable";
 
 /** A manager is invoked by a shared object on creation,
  *  and is used to manage any necessary background work in a singleton way.

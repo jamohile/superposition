@@ -1,8 +1,6 @@
-import { SharedMap } from "../shared/map/shared-map";
-import { SharedObject } from "../shared/object/shared-object";
 import {
   Subscribable,
-  SubscribableCollection,
+  SubscribableCollection
 } from "../subscribable/subscribable";
 
 /** Derived maintains a list of dependencies on other SharedObject objects,
