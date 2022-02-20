@@ -43,7 +43,7 @@ const x = new SharedObject([0, 1, 2, 3]);
 
 const avg = new DerivedObject(
   (deps) => {
-    return sum(deps.x) / x.length;
+    return sum(deps.x) / deps.x.length;
   },
   { x }
 );
