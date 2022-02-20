@@ -10,7 +10,7 @@ import {
  * dependencies' shared and their values. Really, the values are a function of the shared.
  * But I don't believe typescript has a good way to encode that.
  */
-export class Derived<
+export class DerivedObject<
   T,
   /** Dependencies, as shared objects.*/
   D extends Record<string, Subscribable<any>>,

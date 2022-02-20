@@ -1,11 +1,11 @@
 import { SharedObject } from "../shared/object/shared-object";
-import { Derived } from "./derived";
+import { DerivedObject } from "./derived-object";
 
 it("updates based on dependencies.", (done) => {
   const dep1 = new SharedObject(0);
   const dep2 = new SharedObject(0);
 
-  const d = new Derived(
+  const d = new DerivedObject(
     (deps) => {
       return deps.x * deps.y ** 2;
     },

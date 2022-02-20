@@ -30,17 +30,17 @@ s.subscribe((value) => {
 
 This is a bit cooler! We can now react to changes across our application. However, the real power of superposition is realized when we consider how to use its other classes.
 
-## Derived
+## DerivedObject
 Often times, we'd like to compute some data based on one or more other pieces of data.
 
 To use a contrived example, imagine we have a set of numbers X. We'd like to compute its average A.
 
-Now, A must be recomputed whenever X is changed (reloaded, updated, etc). However, it would be wasteful to recompute it in every place it is needed. Really, we'd like to compute it only one time whenever X is changed. For this, we can use `Derived`.
+Now, A must be recomputed whenever X is changed (reloaded, updated, etc). However, it would be wasteful to recompute it in every place it is needed. Really, we'd like to compute it only one time whenever X is changed. For this, we can use `DerivedObject`.
 
 ```ts
 const x = new SharedObject([0, 1, 2, 3]);
 
-const avg = new Derived((vals) => {
+const avg = new DerivedObject((vals) => {
   return sum(vals) / x.length;
 }, {x});
 ```
@@ -49,8 +49,8 @@ There! Now we can subscribe to `avg` just like we would for `x`. Whenever `x` is
 
 This lets us better separate up our dependencies, and prevent repeated work and code. A couple other notes:
 
-- We can use an `async` function in `Derived`, and perform any arbitrary computation.
+- We can use an `async` function in `DerivedObject`, and perform any arbitrary computation.
 
-- We can have any number of dependencies in `Derived`. It will respond to any of them changing.
+- We can have any number of dependencies in `DerivedObject`. It will respond to any of them changing.
 
 ## DOCS ARE WIP
