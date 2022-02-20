@@ -1,7 +1,6 @@
 import {
-  Subscribable,
-  SubscribableCollection
-} from "../subscribable/subscribable";
+  Subscribable} from "../subscribable/subscribable";
+import { SubscribableCollection } from "../subscribable/subscribable-collection";
 
 /** Derived maintains a list of dependencies on other SharedObject objects,
  *  while computing its own shared values.
