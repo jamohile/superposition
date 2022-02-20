@@ -1,4 +1,4 @@
-import { DEFAULT_MANAGER, Manager, SharedObject } from "../object/object";
+import { DEFAULT_MANAGER, Manager, SharedObject } from "../shared/object/shared-object";
 import { Subscribable, Subscription } from "../subscribable/subscribable";
 
 /**

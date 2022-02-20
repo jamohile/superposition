@@ -1,4 +1,4 @@
-import { SharedObject } from "../object/object";
+import { SharedObject } from "../shared/object/shared-object";
 import { Derived } from "./derived";
 
 it("updates based on dependencies.", (done) => {

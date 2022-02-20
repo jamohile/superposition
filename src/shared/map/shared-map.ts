@@ -1,6 +1,6 @@
-import { DEFAULT_MANAGER, Manager, SharedObject } from "../object/object";
-import { Subscribable, Subscription } from "../subscribable/subscribable";
-import { SubscribableMap } from "../subscribable/subscribable-map";
+import { DEFAULT_MANAGER, Manager, SharedObject } from "../object/shared-object";
+import { Subscribable, Subscription } from "../../subscribable/subscribable";
+import { SubscribableMap } from "../../subscribable/subscribable-map";
 
 /**
  * SharedMap is a higher-order version of shared.

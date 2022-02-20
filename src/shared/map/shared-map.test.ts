@@ -1,5 +1,5 @@
-import { SharedObject } from "../object/object";
-import { SharedMap } from "./map";
+import { SharedObject } from "../object/shared-object";
+import { SharedMap } from "./shared-map";
 
 it("lets us access arbitrary elements.", () => {
   const sm = new SharedMap();

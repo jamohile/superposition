@@ -1,4 +1,4 @@
-import { SharedObject } from "./object";
+import { SharedObject } from "./shared-object";
 
 it("can return initial value.", () => {
   const s = new SharedObject("foo");

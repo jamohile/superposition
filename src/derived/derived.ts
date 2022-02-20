@@ -1,5 +1,5 @@
-import { SharedMap } from "../map/map";
-import { SharedObject } from "../object/object";
+import { SharedMap } from "../shared/map/shared-map";
+import { SharedObject } from "../shared/object/shared-object";
 import {
   Subscribable,
   SubscribableCollection,
